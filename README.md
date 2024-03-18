@@ -37,11 +37,6 @@ sudo apt clean
 sudo apt autoremove -y
 ```
 
-add tools to new user
-```bash
-sudo chown -R $USER:$USER help_tools
-```
-
 delete kali user
 ```bash
 sudo pkill -9 -u kali && sudo userdel kali
