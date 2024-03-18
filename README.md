@@ -15,7 +15,7 @@ sudo apt update && sudo apt full-upgrade -y
 
 start script then change passwords
 ```bash
-sudo bash user.sh
+bash user.sh
 ```
 ###### check code before run :)
 
@@ -26,7 +26,7 @@ reboot
 
 to install setup
 ```bash
-sudo bash install.sh
+bash install.sh
 ```
 ###### check code before run :)
 

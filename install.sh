@@ -1,76 +1,101 @@
 #!/bin/bash
 
-sudo apt install torbrowser-launcher tar tor curl python3 python3-scapy virtualbox network-manager fail2ban ufw rkhunter lynis -y
+sudo apt install tar curl python3 python3-scapy fail2ban ufw rkhunter lynis -y
 
-# Change Network Manager conf  may be its allready old
-sudo cp /etc/NetworkManager/NetworkManager.conf /etc/NetworkManager/NetworkManager.conf.bak
-# Replace all instances of [main] with the desired string.
-sudo rm -rf /etc/NetworkManager/NetworkManager.conf
-sudo cp ./NetworkManager.conf /etc/NetworkManager/NetworkManager.conf
-# Restart the NetworkManager service to apply the changes.
-#sudo service network-manager restart
-sudo systemctl restart systemd-networkd
+dir_name="~/Tools"
+if [ ! -d "$dir_name" ]; then
+  mkdir -p "$dir_name"
+  if [ $? -ne 0 ]; then
+    echo "Failed to create directory $dir_name"
+    exit 1
+  fi
+fi
 
-# Make dir with tools
-mkdir help_tools
-cd help_tools
+cd "$dir_name"
 
-# Add whoami-project
-git clone https://github.com/owerdogan/whoami-project.git
-cd whoami-project
-sudo make install
-cd ..
+echo "Do you want to download the password manager?"
+read -p "KeePassXC (y/n) " -n 1 -r
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+  echo "Downloading KeePassXC"
+  mkdir keepassxc
+  cd keepassxc
+  wget https://github.com/keepassxreboot/keepassxc/releases/download/2.7.6/KeePassXC-2.7.6-x86_64.AppImage
+  wget https://github.com/keepassxreboot/keepassxc/releases/download/2.7.6/KeePassXC-2.7.6-x86_64.AppImage.sig
+  wget https://github.com/keepassxreboot/keepassxc/releases/download/2.7.6/KeePassXC-2.7.6-x86_64.AppImage.DIGEST
+  gpg --keyserver keys.openpgp.org --recv-keys BF5A669F2272CF4324C1FDA8CFB4C2166397D0D2
+  gpg --verify KeePassXC-*.sig
+  shasum -a 256 -c KeePassXC-*.DIGEST
+  chmod 744 KeePassXC-2.7.6-x86_64.AppImage
+  cd ..
+else
+  echo "Download KeePassXC skiped"
+fi
+echo ""
 
-# Add anonsurf
-#sudo apt install valac nim
-#sudo apt-get install nim
-#git clone https://github.com/ParrotSec/anonsurf.git
 
-# Add kali-anonsurf
-git clone https://github.com/Und3rf10w/kali-anonsurf.git
-cd kali-anonsurf
-sudo bash installer.sh
-cd ..
+read -p "Do you want to download the VirtualBox? (y/n) " -n 1 -r
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+  echo "Downloading VirtualBox"
+  sudo apt install virtualbox -y
+else
+  echo "Download VirtualBox skiped"
+fi
+echo ""
 
-#mkdir ISO_OVA
-#cd ISO_OVA
-#wget https://deb.parrot.sh/parrot/iso/6.0/Parrot-security-6.0_amd64.ova
-#cd ..
 
-# install KeepassXC
-mkdir passwords
-cd passwords
-wget https://github.com/keepassxreboot/keepassxc/releases/download/2.7.6/KeePassXC-2.7.6-x86_64.AppImage
-cd ../..
+read -p "Do you want to download the TOR / TOR tools? (y/n) " -n 1 -r
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+  echo "Downloading TOR / TOR tools"
+  sudo apt install tor torsocks obfs4proxy torbrowser-launcher -y
+else
+  echo "Download TOR / TOR tools skiped"
+fi
+echo ""
 
-cp -r help_tools ~/
 
-# Disable root login over SSH.
-sudo sed -i 's/^PermitRootLogin without-password/PermitRootLogin no/g' /etc/ssh/sshd_config
+read -p "Do you want to download the network-manager and change network.conf? (y/n) " -n 1 -r
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+  echo "Downloading network-manager and change NetworkManager.conf"
+  sudo apt install network-manager -y
+  sudo cp /etc/NetworkManager/NetworkManager.conf /etc/NetworkManager/NetworkManager.conf.bak
+  sudo rm -rf /etc/NetworkManager/NetworkManager.conf
+  sudo cp ./NetworkManager.conf /etc/NetworkManager/NetworkManager.conf
+  sudo systemctl restart systemd-networkd
+else
+  echo "NetworkManager skiped"
+fi
+  echo ""
 
-# Configure Fail2ban. it is banning IP addresses that are attempting to brute-force logins or otherwise attack the system
-sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
-sudo sed -i 's/^bantime  = .*/bantime  = 3600/' /etc/fail2ban/jail.local
-sudo sed -i 's/^findtime = .*/findtime = 600/' /etc/fail2ban/jail.local
-sudo sed -i 's/^maxretry = .*/maxretry = 3/' /etc/fail2ban/jail.local
 
-# Enable SSH protection in Fail2ban.
-sudo systemctl enable fail2ban
-sudo systemctl start fail2ban
+read -p "Do you want to download whoami-project? (y/n) " -n 1 -r
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+  git clone https://github.com/owerdogan/whoami-project.git
+  cd whoami-project
+  sudo make install
+  cd ..
+else
+  echo "Download whoami-project skiped"
+fi
+  echo ""
 
-# Scan the system for vulnerabilities.
-#sudo rkhunter --update
-#sudo rkhunter --propupd
-#sudo rkhunter --check
+read -p "Do you want to download kali-anonsurf? (y/n) " -n 1 -r
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+  git clone https://github.com/Und3rf10w/kali-anonsurf.git
+  cd kali-anonsurf
+  sudo bash installer.sh
+  cd ..
+else
+  echo "Download kali-anonsurf skiped"
+fi
+  echo ""
 
-# Install Lynis security scanner.
-#sudo lynis install
 
-# Run Lynis security scan.
-#sudo lynis audit system
-
-cd ~/
-sudo chown -R $USER:$USER help_tools
 
 echo "Done. Enjoy!"
-echo "Set ur TimeZone!"
+echo "Set TimeZone!"
