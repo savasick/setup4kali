@@ -95,6 +95,35 @@ else
 fi
   echo ""
 
+read -p "Do you want to download the Element-desktop for Matrix chats? (y/n) " -n 1 -r
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+  echo "Downloading Element-desktop"
+  sudo apt install -y wget apt-transport-https
+  sudo wget -O /usr/share/keyrings/element-io-archive-keyring.gpg https://packages.element.io/debian/element-io-archive-keyring.gpg
+  echo "deb [signed-by=/usr/share/keyrings/element-io-archive-keyring.gpg] https://packages.element.io/debian/ default main" | sudo tee /etc/apt/sources.list.d/element-io.list
+  sudo apt update -y
+  sudo apt install element-desktop -y
+else
+  echo "Download Element-desktop skiped"
+fi
+echo ""
+
+read -p "Do you want to download the Brave browser? (y/n) " -n 1 -r
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+  echo "Downloading Brave browser"
+  sudo apt install curl
+  sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
+  echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main"|sudo tee /etc/apt/sources.list.d/brave-browser-release.list
+  sudo apt update -y
+  sudo apt install brave-browser -y
+  echo "brave installed"
+else
+  echo "Download Brave browser skiped"
+fi
+echo ""
+
 cd ..
 mv "$dir_name" $HOME
 
