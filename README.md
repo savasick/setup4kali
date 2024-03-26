@@ -26,7 +26,7 @@ reboot
 
 to install setup
 ```bash
-bash install.sh
+bash setup.sh
 ```
 ###### check code before run :)
 

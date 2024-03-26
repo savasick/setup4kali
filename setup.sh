@@ -83,6 +83,17 @@ else
 fi
   echo ""
 
+  read -p "Do you want to download Atom ide? (y/n) " -n 1 -r
+  if [[ $REPLY =~ ^[Yy]$ ]]
+  then
+    wget https://github.com/atom/atom/releases/download/v1.60.0/atom-amd64.deb
+    sudo apt install ./atom-amd64.deb
+    echo "alias atom='/usr/bin/atom --no-sandbox'" >> ~/.zshrc
+  else
+    echo "Download Atom skiped"
+  fi
+    echo ""
+
 read -p "Do you want to download kali-anonsurf? (y/n) " -n 1 -r
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
@@ -93,6 +104,27 @@ then
 else
   echo "Download kali-anonsurf skiped"
 fi
+  echo ""
+
+  read -p "Do you want to download the Telegram-desktop? (y/n) " -n 1 -r
+  if [[ $REPLY =~ ^[Yy]$ ]]
+  then
+    echo "Downloading Telegram-desktop"
+    sudo apt install telegram-desktop -y
+  else
+    echo "Download Telegram-desktop skiped"
+  fi
+  echo ""
+
+  read -p "Do you want to download the Discord? (y/n) " -n 1 -r
+  if [[ $REPLY =~ ^[Yy]$ ]]
+  then
+    echo "Downloading Discord"
+    wget "https://discord.com/api/download?platform=linux&format=deb" -O discord.deb
+    sudo dpkg -i discord.deb
+  else
+    echo "Download Discord skiped"
+  fi
   echo ""
 
 read -p "Do you want to download the Element-desktop for Matrix chats? (y/n) " -n 1 -r
